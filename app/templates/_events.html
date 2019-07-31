@@ -1,0 +1,41 @@
+<ul class="events">
+    {% for event in events %}
+        <li class="event">
+            <div class="event-thumbnail">
+                <a href="{{ url_for('.user', username=event.author.username) }}">
+                    <img class="img-rounded profile-thumbnail" src="{{ event.author.gravatar(size=40) }}">
+                </a>
+            </div>
+            <div class="event-content">
+                <div class="event-date">{{ moment(event.timestamp).fromNow() }}</div>
+                <div class="event-author">
+                    <a href="{{ url_for('.user', username=event.author.username) }}">
+                        {{ event.author.username }}
+                    </a>
+                </div>
+                <div class="event-body">
+                    {% if event.body_html %}
+                        {{ event.body_html | safe }}
+                    {% else %}
+                        {{ event.body }}
+                    {% endif %}
+                </div>
+
+                <div class="event-footer">
+                    {% if current_user == event.author %}
+                        <a href="{{ url_for('.edit', id=event.id) }}">
+                            <span class="label label-primary">Edit</span>
+                        </a>
+                    {% elif current_user.is_administrator() %}
+                        <a href="{{ url_for('.edit', id=event.id) }}">
+                            <span class="label label-danger">Edit [Admin]</span>
+                        </a>
+                    {% endif %}
+                    <a href="{{ url_for('.event', id=event.id) }}">
+                        <span class="label label-default">Permalink</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+    {% endfor %}
+</ul>
